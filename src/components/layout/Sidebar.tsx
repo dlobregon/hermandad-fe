@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Icon from '../Icons/Icon'
+import Icon from '../icons/Icon'
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
