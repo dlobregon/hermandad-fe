@@ -1,31 +1,39 @@
 import React, { useState } from 'react'
 import Icon from '../icons/Icon'
+import Escudo from '../../assets/escudo-fondo-transparente-two.png'
 
 const Sidebar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const handleTrigger = (): void => { setIsOpen(!isOpen) }
+  const [isSelected, setSelection] = useState(0)
+  const handleSelection = (index: number): void => { setSelection(index) }
 
   return (
-    <div className={`sidebar${isOpen ? ' sidebar--open' : ''}`}>
-        <div className="trigger" onClick={handleTrigger}>
-            <Icon name='menu' />
+    <div className="sidenav">
+        <div className='sidenav-header'>
+            <img id="escudo-header" src={Escudo}/>
         </div>
-
-        <div className="sidebar-position">
-            <Icon name='home' />
-            <span>Inicio</span>
+        <div className={isSelected === 0 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(0) }} >
+            <div className='sidenav-icon'>
+                <Icon name='home'/>
+            </div>
+            <div className='sidenav-text'>
+                <span>Inicio</span>
+            </div>
         </div>
-        <div className="sidebar-position">
-            <Icon name='people' />
-            <span>Devotos</span>
+        <div className={isSelected === 1 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(1) }}>
+            <div className='sidenav-icon'>
+                <Icon name='people' />
+            </div>
+            <div className='sidenav-text'>
+                <span>Devotos</span>
+            </div>
         </div>
-        <div className="sidebar-position">
-            <Icon name='turno' />
-            <span>turnos</span>
-        </div>
-
-        <div className="sidebar-position">
-            <span>Position 4</span>
+        <div className={isSelected === 2 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(2) }}>
+            <div className='sidenav-icon'>
+                <Icon name='turno' />
+            </div>
+            <div className='sidenav-text'>
+                <span>Turnos</span>
+            </div>
         </div>
     </div>
   )
