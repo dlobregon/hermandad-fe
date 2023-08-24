@@ -1,22 +1,22 @@
 * {
   box-sizing: border-box;
 }
-/* styel for Content */
-.content {
+
+/*.content {
   width: calc(100% - 50px);
   margin-left: auto;
   padding: 15px;
   height: 100%;
   word-break: break-word;
-}
+}*/
 
-/* Style for the side bar*/
+
 .sidebar {
   position: fixed;
   top: 0;
   width: 50px;
   height: 100%;
-  background-color: #401243;
+  background-color: #21133c;
   transition: width 0.3s ease;
   border-right: 1px #4d606e solid;
   padding-top: 15px;
@@ -32,7 +32,7 @@
 }
 
 .sidebar .sidebar-position:hover {
-  background-color: #49274c;
+  background-color: #321c64;
   border-right: 5px #feb73f solid;
 }
 
@@ -64,11 +64,11 @@
   height: auto;
 }
 
-.trigger {
+trigger {
   height: 50px;
   font-size: 24px;
   cursor: pointer;
-  display: flex;
+  display: flex; 
   align-items: center;
   justify-content: flex-end;
   padding: 0 12px 15px;
