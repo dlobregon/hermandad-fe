@@ -1,16 +1,18 @@
 import React from 'react'
-import HamburguerMenu from './HamburgerMenu'
+import HamburguerMenuIcon from './HamburgerMenuIcon'
 import HomeIcon from './HomeIcon'
-import CloseMenu from './CloseMenu'
-import TurnoBase from './TurnoBase'
+import CloseMenuIcon from './CloseMenuIcon'
+import TurnoBaseIcon from './TurnoBaseIcon'
 import UserIcon from './UserIcon'
+import DevotoIcon from './DevotoIcon'
 
 const icons = {
   home: <HomeIcon />,
-  menu: <HamburguerMenu />,
-  closeMenu: <CloseMenu />,
+  menu: <HamburguerMenuIcon />,
+  closeMenu: <CloseMenuIcon />,
   people: <UserIcon />,
-  turno: <TurnoBase />
+  turno: <TurnoBaseIcon />,
+  devoto: <DevotoIcon />
 } as const
 
 interface IconProperties {
