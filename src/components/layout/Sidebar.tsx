@@ -1,17 +1,22 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Icon from '../icons/Icon'
 import Escudo from '../../assets/escudo-fondo-transparente-two.png'
 
-const Sidebar: React.FC = () => {
-  const [isSelected, setSelection] = useState(0)
-  const handleSelection = (index: number): void => { setSelection(index) }
+interface Props {
+  currentPage: number
+  handlePage: (page: number) => void
+}
+
+const Sidebar: React.FC <Props> = (props: Props) => {
+  const { currentPage, handlePage } = props
+  const handleSelection = (index: number): void => { handlePage(index) }
 
   return (
     <div className="sidenav">
         <div className='sidenav-header'>
             <img id="escudo-header" src={Escudo}/>
         </div>
-        <div className={isSelected === 0 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(0) }} >
+        <div className={currentPage === 0 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(0) }} >
             <div className='sidenav-icon'>
                 <Icon name='home'/>
             </div>
@@ -19,15 +24,15 @@ const Sidebar: React.FC = () => {
                 <span>Inicio</span>
             </div>
         </div>
-        <div className={isSelected === 1 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(1) }}>
+        <div className={currentPage === 1 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(1) }}>
             <div className='sidenav-icon'>
-                <Icon name='people' />
+                <Icon name='devoto' />
             </div>
             <div className='sidenav-text'>
                 <span>Devotos</span>
             </div>
         </div>
-        <div className={isSelected === 2 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(2) }}>
+        <div className={currentPage === 2 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(2) }}>
             <div className='sidenav-icon'>
                 <Icon name='turno' />
             </div>

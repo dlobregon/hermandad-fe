@@ -16,12 +16,13 @@
     padding: 10px;
     text-decoration: none;
     font-size: 15px;
-    color: #d8b192;
+    color: #f1f1f1;
     display: block;
   }
 
   .sidenav-header {
     padding: 5px;
+    margin-top: -15px;
   }
   #escudo-header {
     width: 70px;
@@ -56,11 +57,11 @@
   }
   
   /* Style page content */
-  .main {
-    margin-left: 160px; /* Same as the width of the sidebar */
+  /*.main {
+    margin-left: 160px; 
     padding: 0px 10px;
-  }
-
+  }*/
+  
   .content {
     width: calc(100% - 80px);
     margin-left: auto;
