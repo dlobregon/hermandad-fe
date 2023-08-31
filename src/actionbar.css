@@ -1,0 +1,76 @@
+.actionbar {
+    height: 80px;
+    padding-left: 80px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 4px 0px;
+}
+
+.actionbar-backspace {
+    float: inline-start;
+    width: 10%;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 50%;
+}
+
+.actionbar-backspace-icon {
+    float: inline-start;
+    margin-top: 20px;
+    margin-left: 28%;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.actionbar-backspace-icon:hover {
+    box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px;
+}
+
+.actionbar-backspace-icon> svg {
+    float: inline-start;
+    width: 25px;
+    height: 25px;
+    margin-top: 20%;
+    margin-left: 20%;
+}
+
+.actionbar-backspace-text {
+    height: inherit;
+    font-size: 0.8em;
+}
+
+.actionbar-title  {
+    width: 65% ;
+    float: inline-start;
+    line-height: 80px;
+    font-size: 2em;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.actionbar-actions {
+    float: inline-start;
+    width: 25%;
+    line-height: 80px;
+    padding-top: 25px;
+    padding-right: 10%;
+}
+
+.button-nuevo {
+    float: inline-end;
+    border-radius: 100px;
+    border-width: 0;
+    justify-content: center;
+    line-height: 1.4;
+    padding: 6px 20px;
+    background-color: #13b657;
+    color: white;
+
+}
+
+.button-nuevo:hover {
+    box-shadow: #00000026 0 3px 9px 0;
+    background-color: #20aa13;
+  }
+
