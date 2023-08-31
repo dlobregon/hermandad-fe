@@ -8,7 +8,10 @@
     left: 0;
     background-color: #310135; /* Black  5d1a61*/
     overflow-x: hidden; /* Disable horizontal scroll */
-    padding-top: 20px;
+/*    padding-top: 20px;*/
+    /*border-radius: 15px 15px 15px 15px;*/
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+    box-sizing: border-box;
   }
   
   /* The navigation menu links */
@@ -21,12 +24,13 @@
   }
 
   .sidenav-header {
-    padding: 5px;
-    margin-top: -15px;
+    padding: 10px;
+    height: 80px;
+    /*margin-top: -25px;*/
   }
   #escudo-header {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
   }
   
   /* When you mouse over the navigation links, change their color */
@@ -67,13 +71,10 @@
     margin-left: auto;
     padding: 15px;
     height: 100%;
+    min-height: 100%;
     word-break: break-word;
   }
 
-  #escudo-header {
-    width: 70px;
-    height: 70px;
-  }
   
   /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
   @media screen and (max-height: 450px) {
