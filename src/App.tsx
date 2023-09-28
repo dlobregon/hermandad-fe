@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { ApolloProvider } from '@apollo/client'
+import { apolloClient } from './apollo-graphql/ApolloClient'
 import Layout from './components/layout/Layout'
 import './App.css'
 import './sidebar.css'
@@ -32,7 +34,8 @@ const App: React.FC = () => {
     }
   }
   return (
-    <Layout currentPage={currentPage} handlePage={handlePage} handleActionbarOptions={handleActionbarOptions} actionbarOptions={actionbarOptions}>
+    <ApolloProvider client={apolloClient}>
+      <Layout currentPage={currentPage} handlePage={handlePage} handleActionbarOptions={handleActionbarOptions} actionbarOptions={actionbarOptions}>
       {
         currentPage === 0
           ? <Inicio />
@@ -41,7 +44,8 @@ const App: React.FC = () => {
             : <Turnos />
       }
 
-    </Layout>
+      </Layout>
+    </ApolloProvider>
   )
 }
 

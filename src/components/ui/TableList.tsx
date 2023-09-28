@@ -1,5 +1,6 @@
 import React from 'react'
 import { Table } from 'antd'
+import type { DevotoType } from '../../types/DevotoType'
 
 const columns = [
   {
@@ -34,23 +35,14 @@ const columns = [
   }
 ]
 
-interface devotoType {
-  dpi: number
-  nombres: string
-  apellidos: string
-  telefono: string | null
-  email?: string | null | undefined
-  altura?: number | null | undefined
-}
-
 interface tableListProps {
-  data: devotoType []
+  data: DevotoType [] | undefined
 }
 
 const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
   return (
     <>
-        <Table dataSource={data} columns={columns} />
+        <Table dataSource={data} columns={columns} rowKey='dpi'/>
     </>
   )
 }
