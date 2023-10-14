@@ -1,8 +1,9 @@
 import React from 'react'
+import FormView from '../../ui/FormView'
 
 const DevotoForm: React.FC = () => {
   return (
-        <p>devoto Form</p>
+    <FormView />
   )
 }
 

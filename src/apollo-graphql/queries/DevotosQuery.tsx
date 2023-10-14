@@ -19,6 +19,7 @@ const GET_DEVOTOS = gql`
             dpi
             nombres
             apellidos
+            sexo
             telefono
             email
             altura

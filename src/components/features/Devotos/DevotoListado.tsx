@@ -11,7 +11,6 @@ const DevotoListado: React.FC = () => {
     console.log(error)
     return <div>Error</div>
   }
-  console.log(data)
   return (
     <>
             <TableList data={data?.devotos}/>
