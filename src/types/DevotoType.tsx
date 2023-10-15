@@ -1,10 +1,10 @@
 export interface DevotoType {
-  devoto?: number
+  devoto: number
   dpi: number
   nombres: string
   apellidos: string
   sexo: number
-  telefono?: string | null
-  email?: string | null | undefined
-  altura?: number | null | undefined
+  telefono: string
+  email: string
+  altura: number
 }

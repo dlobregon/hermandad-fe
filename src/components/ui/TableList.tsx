@@ -10,15 +10,18 @@ interface tableListProps {
   data: DevotoType [] | undefined
 }
 
-/* interface DevotoTable extends Devoto {
-  filterDropdown: (params: FilterDownTypes) => any
-} */
-
 type DataIndex = keyof DevotoType
 
+interface FilterType {
+  dpi?: null | string []
+  nombres?: null | string []
+  apellidos?: null | string[]
+  sexo?: null | number []
+}
+
 const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
-  const [searchText, setSearchText] = useState('')
-  const [searchedColumn, setSearchedColumn] = useState('')
+  const [totalShownItems, setTotalShownItems] = useState(data?.length)
+  const [currentFilters, setCurrentFilters] = useState<FilterType>({ nombres: null, apellidos: null, dpi: null, sexo: null })
   const searchInput = useRef<InputRef>(null)
 
   const handleSearch = (
@@ -27,13 +30,10 @@ const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
     dataIndex: DataIndex
   ): void => {
     confirm()
-    setSearchText(selectedKeys[0])
-    setSearchedColumn(dataIndex)
   }
 
   const handleReset = (clearFilters: () => void): void => {
     clearFilters()
-    setSearchText('')
   }
 
   const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<DevotoType> => ({
@@ -41,7 +41,7 @@ const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
       <div style={{ padding: 8 }} onKeyDown={(e) => { e.stopPropagation() }}>
         <Input
           ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
+          placeholder={`Buscar ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => { setSelectedKeys((e.target.value.length > 0) ? [e.target.value] : []) }}
           onPressEnter={() => { handleSearch(selectedKeys as string[], confirm, dataIndex) }}
@@ -55,25 +55,23 @@ const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
             size="small"
             style={{ width: 90 }}
           >
-            Search
+            Buscar
           </Button>
           <Button
             onClick={() => { (clearFilters != null) && handleReset(clearFilters) }}
             size="small"
             style={{ width: 90 }}
           >
-            Reset
+            Reiniciar
           </Button>
           <Button
             type="link"
             size="small"
             onClick={() => {
               confirm({ closeDropdown: false })
-              setSearchText((selectedKeys as string[])[0])
-              setSearchedColumn(dataIndex)
             }}
           >
-            Filter
+            Filtrar
           </Button>
           <Button
             type="link"
@@ -82,7 +80,7 @@ const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
               close()
             }}
           >
-            close
+            Cerrar
           </Button>
         </Space>
       </div>
@@ -90,18 +88,10 @@ const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
     filterIcon: (filtered: boolean): React.ReactNode => (
       <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />
     ),
-    /* onFilter: (value: React.Key | boolean, record: DevotoType): boolean => record[dataIndex]
+    onFilter: (value: React.Key | boolean, record: DevotoType): boolean => record[dataIndex]
       .toString()
       .toLowerCase()
-      .includes((value as string).toLowerCase()), */
-    onFilter: (value: React.Key | boolean, record: DevotoType): boolean => {
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-      if (record[dataIndex]) {
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-        return record[dataIndex].toString().toLowerCase().includes((value as string).toLowerCase())
-      }
-      return false
-    },
+      .includes((value as string).toLowerCase()),
     render: (text: string) => text
   })
 
@@ -110,17 +100,25 @@ const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
       title: 'DPI',
       dataIndex: 'dpi',
       key: 'dpi',
+      ellipsis: true,
+      width: '12%',
       ...getColumnSearchProps('dpi')
     },
     {
       title: 'Nombres',
       dataIndex: 'nombres',
-      key: 'nombres'
+      key: 'nombres',
+      ellipsis: true,
+      ...getColumnSearchProps('nombres'),
+      width: '15%'
     },
     {
       title: 'Apellidos',
       dataIndex: 'apellidos',
-      key: 'apellidos'
+      key: 'apellidos',
+      ellipsis: true,
+      ...getColumnSearchProps('apellidos'),
+      width: '15%'
     },
     {
       title: 'Sexo',
@@ -130,22 +128,27 @@ const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
       onFilter: (value: boolean | React.Key, devoto) => devoto.sexo === value,
       render: (_: any, devoto: DevotoType) => (
         <Tag color={devoto.sexo === 2 ? 'blue' : 'magenta'}>{devoto.sexo === 2 ? 'hombre' : 'mujer' }</Tag>
-      )
+      ),
+      width: '10%'
     },
     {
       title: 'Telefono',
       dataIndex: 'telefono',
-      key: 'telefono'
+      key: 'telefono',
+      width: '8%'
     },
     {
       title: 'Correo',
       dataIndex: 'email',
-      key: 'email'
+      key: 'email',
+      ellipsis: true,
+      width: '15%'
     },
     {
       title: 'Altura',
       dataIndex: 'altura',
-      key: 'altura'
+      key: 'altura',
+      width: '10%'
     },
     {
       title: 'Acciones',
@@ -160,12 +163,29 @@ const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
   ]
 
   const onChange: TableProps<DevotoType>['onChange'] = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra)
+    setTotalShownItems(extra?.currentDataSource?.length)
+    setCurrentFilters(filters)
   }
 
   return (
     <>
-        <Table dataSource={data} rowKey='devoto' size="middle" columns={columns} onChange={onChange}/>
+        <Table
+          dataSource={data}
+          rowKey='devoto'
+          size="middle"
+          columns={columns}
+          onChange={onChange}
+          title={() => (
+            <div style={ { height: '20px' }}>
+              {currentFilters.dpi != null || currentFilters.nombres != null || currentFilters.apellidos != null || currentFilters.sexo != null ? 'Filtros: ' : '' }
+              {(currentFilters.dpi != null) ? <Tag bordered={false}>Dpi:    {currentFilters.dpi?.[0]}</Tag> : null }
+              {(currentFilters.nombres != null) ? <Tag bordered={false}>nombres:    {currentFilters.nombres?.[0]}</Tag> : null }
+              {(currentFilters.apellidos != null) ? <Tag bordered={false}>apellidos:    {currentFilters.apellidos?.[0]}</Tag> : null }
+              {(currentFilters.sexo != null) ? <Tag bordered={false} color={currentFilters.sexo?.[0] === 2 ? 'blue' : 'magenta'}>sexo:    {currentFilters.sexo?.[0] === 2 ? 'Hombre' : 'Mujer'}</Tag> : null }
+              <span style={ { float: 'right' } }>Devotos: {totalShownItems}  </span>
+            </div>
+          )}
+        />
     </>
   )
 }
