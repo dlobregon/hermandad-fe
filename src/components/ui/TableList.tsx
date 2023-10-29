@@ -161,7 +161,7 @@ const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto }: tabl
       render: (_: any, devoto: DevotoType) => (
         <Space size="middle">
           <Button type="link" size="small" onClick={() => { callEdit(devoto) }}> Editar</Button>
-          <a>Eliminar</a>
+          <a>Agregar turno</a>
         </Space>
       )
     }

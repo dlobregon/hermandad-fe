@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { type DevotoType, type DevotoFormType } from '../../../types/DevotoType'
 import DevotoListado from './DevotoListado'
 import DevotoForm from './DevotoForm'
@@ -23,6 +23,11 @@ const Devotos: React.FC<DevotosProps> = ({ isForm, handleForm }: DevotosProps) =
   const [currentDevoto, setCurrentDevoto] = useState<DevotoFormType>(initialFormValues)
   const [isEdition, setIsEdition] = useState(false)
 
+  useEffect(() => {
+    if (!isForm) {
+      resetDevoto()
+    }
+  }, [isForm])
   const defineCurrentDevoto = (devoto: DevotoType): void => {
     setIsEdition(true)
     setCurrentDevoto(devoto)

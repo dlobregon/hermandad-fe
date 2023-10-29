@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Button, Form, Input, Radio, InputNumber, Result } from 'antd'
 import { type DevotoType, type DevotoFormProps } from '../../types/DevotoType'
 import type { RadioChangeEvent } from 'antd'
@@ -6,7 +6,7 @@ import { useCreateDevotoFormData } from '../../hooks/useCreateDevotoFormData'
 import { useEditDevotoFormData } from '../../hooks/useEditDevotoFormData'
 
 const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
-  const { devotoData, resetDevoto, isEdition } = formProps
+  const { devotoData, isEdition } = formProps
   const [sexo, setSexo] = useState(1)
   const { handleDevotoFormSubmit } = useCreateDevotoFormData()
   const { handleDevotoEditFormSubmit } = useEditDevotoFormData()
@@ -21,15 +21,17 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
     setFormData(errorInfo?.values)
   }
 
+  /*
   const resetForm = (): void => {
     setSubmitStatus(0)
     setFormData(devotoData)
   }
+  */
 
   const onFinishHandle = (data: any): void => {
     setFormData(data)
     let result
-    if (isEdition) {
+    if (isEdition || (devotoData.devoto != null)) {
       const editData = { ...data, devoto: devotoData.devoto }
       result = handleDevotoEditFormSubmit(editData)
     } else {
@@ -41,15 +43,6 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
       setSubmitStatus(2)
     })
   }
-
-  useEffect(() => {
-    if (submitStatus === 1) {
-      return (): void => {
-        resetDevoto()
-      }
-    }
-  },
-  [submitStatus])
 
   return (
     <>
@@ -137,9 +130,6 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
           ? <Result
         status="success"
         title="Los datos del devoto se han guardado exitosamente"
-        extra={[
-          <Button key="buy" onClick={() => { resetForm() }}>Ingresar nuevos Devoto</Button>
-        ]}
       />
           : <Result
       status="error"
