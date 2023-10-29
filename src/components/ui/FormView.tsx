@@ -1,24 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Form, Input, Radio, InputNumber, Result } from 'antd'
-import { type DevotoType } from '../../types/DevotoType'
+import { type DevotoType, type DevotoFormProps } from '../../types/DevotoType'
 import type { RadioChangeEvent } from 'antd'
 import { useCreateDevotoFormData } from '../../hooks/useCreateDevotoFormData'
+import { useEditDevotoFormData } from '../../hooks/useEditDevotoFormData'
 
-const initialFormValues = {
-  dpi: undefined,
-  nombres: undefined,
-  apellidos: undefined,
-  altura: 1,
-  email: undefined,
-  sexo: undefined,
-  telefono: undefined
-}
-
-const FormView: React.FC = () => {
+const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
+  const { devotoData, resetDevoto, isEdition } = formProps
   const [sexo, setSexo] = useState(1)
   const { handleDevotoFormSubmit } = useCreateDevotoFormData()
+  const { handleDevotoEditFormSubmit } = useEditDevotoFormData()
   const [submitStatus, setSubmitStatus] = useState(0)
-  const [formData, setFormData] = useState(initialFormValues)
+  const [formData, setFormData] = useState(devotoData)
 
   const changeSexo = ({ target: { value } }: RadioChangeEvent): void => {
     setSexo(value)
@@ -30,18 +23,33 @@ const FormView: React.FC = () => {
 
   const resetForm = (): void => {
     setSubmitStatus(0)
-    setFormData(initialFormValues)
+    setFormData(devotoData)
   }
 
   const onFinishHandle = (data: any): void => {
     setFormData(data)
-    const result = handleDevotoFormSubmit(data)
+    let result
+    if (isEdition) {
+      const editData = { ...data, devoto: devotoData.devoto }
+      result = handleDevotoEditFormSubmit(editData)
+    } else {
+      result = handleDevotoFormSubmit(data)
+    }
     void result.then((data) => {
       setSubmitStatus(1)
     }).catch((e) => {
       setSubmitStatus(2)
     })
   }
+
+  useEffect(() => {
+    if (submitStatus === 1) {
+      return (): void => {
+        resetDevoto()
+      }
+    }
+  },
+  [submitStatus])
 
   return (
     <>
@@ -130,7 +138,7 @@ const FormView: React.FC = () => {
         status="success"
         title="Los datos del devoto se han guardado exitosamente"
         extra={[
-          <Button key="buy" onClick={() => { resetForm() }}>Ingresar nuevos datos</Button>
+          <Button key="buy" onClick={() => { resetForm() }}>Ingresar nuevos Devoto</Button>
         ]}
       />
           : <Result

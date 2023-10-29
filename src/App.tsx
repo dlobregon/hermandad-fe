@@ -33,6 +33,12 @@ const App: React.FC = () => {
       setActionbarOptions({ isForm: false, feature: 'turnos' })
     }
   }
+
+  const handleForm = (enable: boolean): void => {
+    const newActionbarOption = { ...actionbarOptions, isForm: enable }
+    setActionbarOptions(newActionbarOption)
+  }
+
   return (
     <ApolloProvider client={apolloClient}>
       <Layout currentPage={currentPage} handlePage={handlePage} handleActionbarOptions={handleActionbarOptions} actionbarOptions={actionbarOptions}>
@@ -40,7 +46,7 @@ const App: React.FC = () => {
         currentPage === 0
           ? <Inicio />
           : currentPage === 1
-            ? <Devotos isForm={actionbarOptions.isForm}/>
+            ? <Devotos isForm={actionbarOptions.isForm} handleForm={handleForm}/>
             : <Turnos />
       }
 

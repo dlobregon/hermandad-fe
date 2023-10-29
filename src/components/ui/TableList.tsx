@@ -8,6 +8,7 @@ import { SearchOutlined } from '@ant-design/icons'
 
 interface tableListProps {
   data: DevotoType [] | undefined
+  defineCurrentDevoto: (data: DevotoType) => void
 }
 
 type DataIndex = keyof DevotoType
@@ -19,7 +20,7 @@ interface FilterType {
   sexo?: null | number []
 }
 
-const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
+const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto }: tableListProps) => {
   const [totalShownItems, setTotalShownItems] = useState(data?.length)
   const [currentFilters, setCurrentFilters] = useState<FilterType>({ nombres: null, apellidos: null, dpi: null, sexo: null })
   const searchInput = useRef<InputRef>(null)
@@ -34,6 +35,10 @@ const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
 
   const handleReset = (clearFilters: () => void): void => {
     clearFilters()
+  }
+
+  const callEdit = (devoto: DevotoType): void => {
+    defineCurrentDevoto(devoto)
   }
 
   const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<DevotoType> => ({
@@ -124,10 +129,10 @@ const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
       title: 'Sexo',
       dataIndex: 'sexo',
       key: 'sexo',
-      filters: [{ text: 'Mujer', value: 1 }, { text: 'Hombre', value: 2 }],
+      filters: [{ text: 'Femenino', value: 1 }, { text: 'Masculino', value: 2 }],
       onFilter: (value: boolean | React.Key, devoto) => devoto.sexo === value,
       render: (_: any, devoto: DevotoType) => (
-        <Tag color={devoto.sexo === 2 ? 'blue' : 'magenta'}>{devoto.sexo === 2 ? 'hombre' : 'mujer' }</Tag>
+        <Tag color={devoto.sexo === 2 ? 'blue' : 'magenta'}>{devoto.sexo === 2 ? 'Masculino' : 'Femenino' }</Tag>
       ),
       width: '10%'
     },
@@ -155,7 +160,7 @@ const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
       key: 'operation',
       render: (_: any, devoto: DevotoType) => (
         <Space size="middle">
-          <a>Editar</a>
+          <Button type="link" size="small" onClick={() => { callEdit(devoto) }}> Editar</Button>
           <a>Eliminar</a>
         </Space>
       )
@@ -178,10 +183,10 @@ const TableList: React.FC<tableListProps> = ({ data }: tableListProps) => {
           title={() => (
             <div style={ { height: '20px' }}>
               {currentFilters.dpi != null || currentFilters.nombres != null || currentFilters.apellidos != null || currentFilters.sexo != null ? 'Filtros: ' : '' }
-              {(currentFilters.dpi != null) ? <Tag bordered={false}>Dpi:    {currentFilters.dpi?.[0]}</Tag> : null }
-              {(currentFilters.nombres != null) ? <Tag bordered={false}>nombres:    {currentFilters.nombres?.[0]}</Tag> : null }
-              {(currentFilters.apellidos != null) ? <Tag bordered={false}>apellidos:    {currentFilters.apellidos?.[0]}</Tag> : null }
-              {(currentFilters.sexo != null) ? <Tag bordered={false} color={currentFilters.sexo?.[0] === 2 ? 'blue' : 'magenta'}>sexo:    {currentFilters.sexo?.[0] === 2 ? 'Hombre' : 'Mujer'}</Tag> : null }
+              {(currentFilters.dpi != null) ? <Tag bordered={false}>Dpi:    <strong>{currentFilters.dpi?.[0]}</strong></Tag> : null }
+              {(currentFilters.nombres != null) ? <Tag bordered={false}>nombres:     <strong>{currentFilters.nombres?.[0]}</strong></Tag> : null }
+              {(currentFilters.apellidos != null) ? <Tag bordered={false}>apellidos:    <strong>{currentFilters.apellidos?.[0]}</strong></Tag> : null }
+              {(currentFilters.sexo != null) ? <Tag bordered={false} color={currentFilters.sexo?.[0] === 2 ? 'blue' : 'magenta'}>sexo:     <strong>{currentFilters.sexo?.[0] === 2 ? 'Masculino' : 'Femenino'}</strong></Tag> : null }
               <span style={ { float: 'right' } }>Devotos: {totalShownItems}  </span>
             </div>
           )}
