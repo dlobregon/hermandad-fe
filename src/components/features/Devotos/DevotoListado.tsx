@@ -8,10 +8,11 @@ interface DevotoListadoProps {
 }
 
 const DevotoListado: React.FC<DevotoListadoProps> = (props: DevotoListadoProps) => {
+  console.log('hola')
   const { defineCurrentDevoto } = props
   const { data, error, loading } = useDevotosQuery()
   if (loading) {
-    return <div>loading... </div>
+    return <div>cargando... </div>
   }
   if (error != null) {
     console.log(error)
