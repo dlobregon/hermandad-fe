@@ -9,6 +9,7 @@ import { SearchOutlined } from '@ant-design/icons'
 interface tableListProps {
   data: DevotoType [] | undefined
   defineCurrentDevoto: (data: DevotoType) => void
+  addTurno: (devoto: DevotoType) => void
 }
 
 type DataIndex = keyof DevotoType
@@ -20,7 +21,7 @@ interface FilterType {
   sexo?: null | number []
 }
 
-const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto }: tableListProps) => {
+const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto, addTurno }: tableListProps) => {
   const [totalShownItems, setTotalShownItems] = useState(data?.length)
   const [currentFilters, setCurrentFilters] = useState<FilterType>({ nombres: null, apellidos: null, dpi: null, sexo: null })
   const searchInput = useRef<InputRef>(null)
@@ -39,6 +40,10 @@ const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto }: tabl
 
   const callEdit = (devoto: DevotoType): void => {
     defineCurrentDevoto(devoto)
+  }
+
+  const callAddturno = (devoto: DevotoType): void => {
+    addTurno(devoto)
   }
 
   const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<DevotoType> => ({
@@ -161,7 +166,7 @@ const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto }: tabl
       render: (_: any, devoto: DevotoType) => (
         <Space size="middle">
           <Button type="link" size="small" onClick={() => { callEdit(devoto) }}> Editar</Button>
-          <a>Agregar turno</a>
+          <Button type="link" size="small" onClick={() => { callAddturno(devoto) }}> Agregar turno</Button>
         </Space>
       )
     }

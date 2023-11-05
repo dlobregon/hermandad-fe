@@ -16,8 +16,8 @@ interface ActionBarProps {
 }
 
 const App: React.FC = () => {
-  const [currentPage, setPage] = useState(0)
-  const [actionbarOptions, setActionbarOptions] = useState <ActionBarProps>({ isForm: false, feature: 'inicio' })
+  const [currentPage, setPage] = useState(1)
+  const [actionbarOptions, setActionbarOptions] = useState <ActionBarProps>({ isForm: false, feature: 'devotos' })
 
   const handleActionbarOptions = (options: ActionBarProps): void => {
     setActionbarOptions(options)

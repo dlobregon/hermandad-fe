@@ -24,4 +24,5 @@ export interface DevotoFormProps {
   isEdition: boolean
   devotoData: DevotoFormType
   resetDevoto: () => void
+  isTurno: boolean
 }

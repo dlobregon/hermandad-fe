@@ -22,10 +22,12 @@ const initialFormValues = {
 const Devotos: React.FC<DevotosProps> = ({ isForm, handleForm }: DevotosProps) => {
   const [currentDevoto, setCurrentDevoto] = useState<DevotoFormType>(initialFormValues)
   const [isEdition, setIsEdition] = useState(false)
+  const [isTurno, setIsturno] = useState(false)
 
   useEffect(() => {
     if (!isForm) {
       resetDevoto()
+      setIsturno(false)
     }
   }, [isForm])
   const defineCurrentDevoto = (devoto: DevotoType): void => {
@@ -39,12 +41,19 @@ const Devotos: React.FC<DevotosProps> = ({ isForm, handleForm }: DevotosProps) =
     setCurrentDevoto(initialFormValues)
   }
 
+  const addTurno = (devoto: DevotoType): void => {
+    setIsturno(true)
+    setCurrentDevoto(devoto)
+    setIsEdition(true)
+    handleForm(true)
+  }
+
   return (
     <>
       {
         !isForm
-          ? <DevotoListado defineCurrentDevoto={defineCurrentDevoto}/>
-          : <DevotoForm isEdition={isEdition} devotoData={currentDevoto} resetDevoto={resetDevoto}/>
+          ? <DevotoListado addTurno={addTurno} defineCurrentDevoto={defineCurrentDevoto}/>
+          : <DevotoForm isEdition={isEdition} devotoData={currentDevoto} isTurno={isTurno} resetDevoto={resetDevoto}/>
       }
     </>
   )

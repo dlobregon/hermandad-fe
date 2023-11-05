@@ -5,10 +5,11 @@ import { type DevotoType } from '../../../types/DevotoType'
 
 interface DevotoListadoProps {
   defineCurrentDevoto: (devoto: DevotoType) => void
+  addTurno: (devoto: DevotoType) => void
 }
 
 const DevotoListado: React.FC<DevotoListadoProps> = (props: DevotoListadoProps) => {
-  const { defineCurrentDevoto } = props
+  const { defineCurrentDevoto, addTurno } = props
   const { data, error, loading } = useDevotosQuery()
   if (loading) {
     return <div>cargando... </div>
@@ -19,7 +20,7 @@ const DevotoListado: React.FC<DevotoListadoProps> = (props: DevotoListadoProps) 
   }
   return (
     <>
-            <TableList defineCurrentDevoto={defineCurrentDevoto} data={data?.devotos}/>
+            <TableList addTurno={addTurno} defineCurrentDevoto={defineCurrentDevoto} data={data?.devotos}/>
     </>
   )
 }
