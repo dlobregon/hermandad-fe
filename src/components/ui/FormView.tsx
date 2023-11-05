@@ -191,7 +191,7 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
               wrapperCol={{ span: 16 }}
               style={{ maxWidth: 1000 }}
               onFinish={onFinishturno}
-              initialValues={ { tipo_turno: 1, cantidad: 1 }}
+              initialValues={ { tipo_turno: 1, cantidad: 1, procesion: 1, fecha: dayjs(new Date()) }}
               autoComplete="off">
               <Form.Item<TurnoForm>
                 name='procesion'
