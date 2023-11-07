@@ -8,7 +8,7 @@ import './actionbar.css'
 
 import Devotos from './components/features/Devotos'
 import Inicio from './components/features/Inicio'
-import Turnos from './components/features/Turnos'
+import Turno from './components/features/Turno'
 
 interface ActionBarProps {
   isForm: boolean
@@ -47,7 +47,7 @@ const App: React.FC = () => {
           ? <Inicio />
           : currentPage === 1
             ? <Devotos isForm={actionbarOptions.isForm} handleForm={handleForm}/>
-            : <Turnos />
+            : <Turno />
       }
 
       </Layout>
