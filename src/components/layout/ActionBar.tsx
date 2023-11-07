@@ -61,7 +61,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ isForm, feature, handleActionbarO
        <div className='actionbar-title'>{title}</div>
        <div className='actionbar-actions'>
           {
-            !showBack && feature !== 'inicio'
+            !showBack && feature !== 'inicio' && feature !== 'turnos'
               ? <button className='button-nuevo' onClick={handleActionButton}>{buttonText}</button>
               : ''
           }
