@@ -20,7 +20,7 @@ const DevotoListado: React.FC<DevotoListadoProps> = (props: DevotoListadoProps) 
   }
   return (
     <>
-            <TableList addTurno={addTurno} defineCurrentDevoto={defineCurrentDevoto} data={data?.devotos}/>
+      <TableList addTurno={addTurno} defineCurrentDevoto={defineCurrentDevoto} data={data?.devotos}/>
     </>
   )
 }
