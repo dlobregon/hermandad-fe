@@ -19,7 +19,8 @@ const GET_TURNOS_BY_PROCESION = gql`
             nombre_procesion
             cantidad
             fecha
-            turno_numero
+            nombre_turno
+            recibo
         }
     }
 `

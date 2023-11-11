@@ -25,19 +25,24 @@ const columns = [
     key: 'nombre_procesion'
   },
   {
+    title: 'Turno No.',
+    dataIndex: 'nombre_turno',
+    key: 'nombre_turno'
+  },
+  {
     title: 'Cantidad turnos',
     dataIndex: 'cantidad',
     key: 'cantidad'
   },
   {
-    title: 'Fecha',
-    dataIndex: 'fecha',
-    key: 'fecha'
+    title: 'No recibo',
+    dataIndex: 'recibo',
+    key: 'recibo'
   },
   {
-    title: 'Turno No.',
-    dataIndex: 'turno_numero',
-    key: 'turno_numero'
+    title: 'Fecha registro',
+    dataIndex: 'fecha',
+    key: 'fecha'
   }
 ]
 

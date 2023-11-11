@@ -5,7 +5,8 @@ export interface ReporteTurno {
   nombre_procesion: string
   cantidad: number
   fecha: string
-  turno_numero: number
+  nombre_turno: string
+  recibo: number
 }
 
 export interface TurnoForm {
