@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
-import { Button, Form, Input, Radio, InputNumber, Result, Select, DatePicker } from 'antd'
+import { Button, Form, Input, Radio, InputNumber, Result, Select, DatePicker, Divider, Typography } from 'antd'
 import { type DevotoType, type DevotoFormProps } from '../../types/DevotoType'
-import { type TurnoForm } from '../../types/TurnoType'
+import { type TurnoForm, type TurnosDisponibles } from '../../types/TurnoType'
 import type { RadioChangeEvent } from 'antd'
 import dayjs from 'dayjs'
 import { useCreateDevotoFormData } from '../../hooks/useCreateDevotoFormData'
 import { useEditDevotoFormData } from '../../hooks/useEditDevotoFormData'
 import { useCreateTurnoFormData } from '../../hooks/useCreateTurnoFormData'
+import { getProcesionesQuery } from '../../apollo-graphql/queries/ProcesionesHabilitadasQ.tsx'
+import { useDisponiblesByProcesion } from '../../hooks/useTurnosDisopnibles'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const draftData = {
@@ -24,7 +26,13 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
   const [submitStatus, setSubmitStatus] = useState(0)
   const [formData, setFormData] = useState(devotoData)
   const [turnoSubmit, setTurnoSubmit] = useState(0)
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [disableTurnos, setDisableTurnos] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [turnosDisponibles, setTurnosDisponibles] = useState<TurnosDisponibles []>([])
+  const { handleDisponiblesByProcesion } = useDisponiblesByProcesion()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectedTurno, setSelectedTurno] = useState<null | string>()
   const changeSexo = ({ target: { value } }: RadioChangeEvent): void => {
     setSexo(value)
   }
@@ -56,13 +64,36 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
     })
   }
 
+  const handleProcesiones = (value: string): void => {
+    const [procesionTmp, tipoProcesionTmp] = value.split(',')
+
+    setSelectedTurno(undefined)
+    const disponiblesData = handleDisponiblesByProcesion({
+      procesion: parseInt(procesionTmp),
+      tipo_procesion: parseInt(tipoProcesionTmp)
+    })
+    void disponiblesData.then((data) => {
+      if ((data.data?.disponiblesByProcesion) != null) {
+        setTurnosDisponibles(data.data?.disponiblesByProcesion.filter(item => item.disponibles > 0))
+        setDisableTurnos(true)
+        setSelectedTurno(undefined)
+      }
+    })
+  }
+
+  const handleSelectTurno = (value: string): void => {
+    setDisableTurnos(false)
+    setSelectedTurno(value)
+  }
+
   const onFinishturno = (data: any): void => {
     const { devoto } = devotoData
-    const { recibo, fecha, procesion, cantidad } = data
-    const reciboNum = parseInt(recibo)
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { usuario, tipo_turno, numero } = draftData
+    const { recibo, fecha, procesion, cantidad, tipo_turno } = data
+    const reciboNum = parseInt(recibo)
+    const { usuario, numero } = draftData
     const fechaStr = dayjs(fecha).format('YYYY-MM-DD')
+    const procesionTmp = parseInt(procesion)
     const turnoFormData = {
       numero,
       recibo: reciboNum,
@@ -70,7 +101,7 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
       tipo_turno,
       usuario,
       devoto: (devoto != null) ? +devoto : 0,
-      procesion,
+      procesion: procesionTmp,
       cantidad
     }
     const resultTurno = handleTurnoFormSubmit(turnoFormData)
@@ -181,6 +212,8 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
     </>
     )
   } else {
+    const { data } = getProcesionesQuery()
+    const { Text } = Typography
     return (
       <>
       {
@@ -191,16 +224,29 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
               wrapperCol={{ span: 16 }}
               style={{ maxWidth: 1000 }}
               onFinish={onFinishturno}
-              initialValues={ { tipo_turno: 1, cantidad: 1, procesion: 1, fecha: dayjs(new Date()) }}
-              autoComplete="off">
+              initialValues={ { cantidad: 1, fecha: dayjs(new Date()), tipo_turno: undefined }}
+              autoComplete="off"
+              >
+                <Form.Item
+                label='Nombre'
+                >
+                  <Text>{devotoData.nombres} {devotoData.apellidos}</Text>
+                </Form.Item>
+                <Divider />
               <Form.Item<TurnoForm>
                 name='procesion'
                 label="Seleccionar cortejo"
                 rules={[{ required: true, message: 'Seleccione un cortejo' }]}
               >
-                <Select>
-                  <Select.Option value={1}>Solemnidad Cristo Rey - 2023</Select.Option>
-                </Select>
+                <Select style={{ width: 240 }}
+                  placeholder='seleccione un cortejo procesional'
+                  disabled={data === null}
+                  options={data?.procesionesHabilitadas.map((procesion) => ({
+                    value: `${procesion.procesion},${procesion.tipo_procesion}`,
+                    label: procesion.nombre
+                  }))}
+                  onChange={handleProcesiones}
+                />
               </Form.Item>
               <Form.Item<TurnoForm>
                 name='fecha'
@@ -211,14 +257,18 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
               </Form.Item>
               <Form.Item<TurnoForm>
                 name='tipo_turno'
-                label="Tipo turno">
-                <Select
-                  disabled={true}
+                label="Tipo turno"
+                rules={[{ required: true, message: 'Por favor seleccione un turno' }]}
                 >
-                  <Select.Option value={1}>Especial</Select.Option>
-                  <Select.Option value={2}>Ordinario Hombre</Select.Option>
-                  <Select.Option value={3}>Ordinarion Mujer</Select.Option>
-                </Select>
+                <Select
+                value={selectedTurno}
+                open={disableTurnos}
+                options={turnosDisponibles.map((turno) => ({
+                  value: turno.tipo_turno,
+                  label: `${turno.nombre} - disponibles: ${turno.disponibles}`
+                }))}
+                onChange={handleSelectTurno}
+                />
               </Form.Item>
               <Form.Item<TurnoForm>
                 label="Recibo No."

@@ -29,3 +29,9 @@ export interface Turno {
   devoto: number
   procesion: number
 }
+
+export interface TurnosDisponibles {
+  tipo_turno: number
+  nombre: string
+  disponibles: number
+}
