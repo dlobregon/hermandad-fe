@@ -40,6 +40,14 @@ const Sidebar: React.FC <Props> = (props: Props) => {
                 <span>Turnos</span>
             </div>
         </div>
+        <div className={currentPage === 3 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(3) }}>
+            <div className='sidenav-icon'>
+                <Icon name='cortejo' />
+            </div>
+            <div className='sidenav-text'>
+                <span>Cortejos</span>
+            </div>
+        </div>
     </div>
   )
 }

@@ -3,11 +3,11 @@ import Icon from '../icons/Icon'
 
 interface ActionhandlerParams {
   isForm: boolean
-  feature: 'turnos' | 'devotos' | 'inicio'
+  feature: 'turnos' | 'devotos' | 'inicio' | 'cortejos'
 }
 interface ActionBarProps {
   isForm: boolean
-  feature: 'turnos' | 'devotos' | 'inicio'
+  feature: 'turnos' | 'devotos' | 'inicio' | 'cortejos'
   handleActionbarOptions: (params: ActionhandlerParams) => void
 }
 
@@ -34,6 +34,8 @@ const ActionBar: React.FC<ActionBarProps> = ({ isForm, feature, handleActionbarO
         setTitle('Devoto')
       } else if (feature === 'inicio') {
         setTitle('inicio')
+      } else if (feature === 'cortejos') {
+        setTitle('Cortejo')
       }
     } else {
       setShowBack(false)
@@ -42,9 +44,12 @@ const ActionBar: React.FC<ActionBarProps> = ({ isForm, feature, handleActionbarO
         setButtonText('nuevo turno')
       } else if (feature === 'devotos') {
         setTitle('Listado de Devotos')
-        setButtonText('nuevo devoto')
+        setButtonText('Registar devoto')
       } else if (feature === 'inicio') {
         setTitle('inicio')
+      } else if (feature === 'cortejos') {
+        setTitle('Lista de Cortejos')
+        setButtonText('Crear cortejo')
       }
     }
   }, [isForm, feature])

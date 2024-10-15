@@ -5,7 +5,7 @@ import { Card } from 'antd'
 
 interface ActionBarProps {
   isForm: boolean
-  feature: 'turnos' | 'devotos' | 'inicio'
+  feature: 'turnos' | 'devotos' | 'inicio' | 'cortejos'
 }
 
 interface Props {

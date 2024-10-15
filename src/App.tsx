@@ -9,15 +9,16 @@ import './actionbar.css'
 import Devotos from './components/features/Devotos'
 import Inicio from './components/features/Inicio'
 import Turno from './components/features/Turno'
+import Cortejos from './components/features/Cortejos'
 
 interface ActionBarProps {
   isForm: boolean
-  feature: 'turnos' | 'devotos' | 'inicio'
+  feature: 'turnos' | 'devotos' | 'inicio' | 'cortejos'
 }
 
 const App: React.FC = () => {
   const [currentPage, setPage] = useState(1)
-  const [actionbarOptions, setActionbarOptions] = useState <ActionBarProps>({ isForm: false, feature: 'devotos' })
+  const [actionbarOptions, setActionbarOptions] = useState<ActionBarProps>({ isForm: false, feature: 'devotos' })
 
   const handleActionbarOptions = (options: ActionBarProps): void => {
     setActionbarOptions(options)
@@ -31,6 +32,8 @@ const App: React.FC = () => {
       setActionbarOptions({ isForm: false, feature: 'devotos' })
     } else if (page === 2 && actionbarOptions.feature !== 'turnos') {
       setActionbarOptions({ isForm: false, feature: 'turnos' })
+    } else if (page === 3 && actionbarOptions.feature !== 'cortejos') {
+      setActionbarOptions({ isForm: false, feature: 'cortejos' })
     }
   }
 
@@ -42,13 +45,13 @@ const App: React.FC = () => {
   return (
     <ApolloProvider client={apolloClient}>
       <Layout currentPage={currentPage} handlePage={handlePage} handleActionbarOptions={handleActionbarOptions} actionbarOptions={actionbarOptions}>
-      {
-        currentPage === 0
-          ? <Inicio />
-          : currentPage === 1
-            ? <Devotos isForm={actionbarOptions.isForm} handleForm={handleForm}/>
-            : <Turno />
-      }
+        {
+          currentPage === 0
+            ? <Inicio />
+            : currentPage === 1
+              ? <Devotos isForm={actionbarOptions.isForm} handleForm={handleForm} />
+              : currentPage === 2 ? <Turno /> : <Cortejos isForm={actionbarOptions.isForm} handleForm={handleForm}/>
+        }
 
       </Layout>
     </ApolloProvider>

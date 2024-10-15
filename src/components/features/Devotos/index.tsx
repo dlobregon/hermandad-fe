@@ -30,6 +30,7 @@ const Devotos: React.FC<DevotosProps> = ({ isForm, handleForm }: DevotosProps) =
       setIsturno(false)
     }
   }, [isForm])
+
   const defineCurrentDevoto = (devoto: DevotoType): void => {
     setIsEdition(true)
     setCurrentDevoto(devoto)
