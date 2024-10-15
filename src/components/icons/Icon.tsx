@@ -6,6 +6,7 @@ import TurnoBaseIcon from './TurnoBaseIcon'
 import UserIcon from './UserIcon'
 import DevotoIcon from './DevotoIcon'
 import BackArrowIcon from './BackArrowIcon'
+import CortejoIcon from './CortejoIcon'
 
 const icons = {
   home: <HomeIcon />,
@@ -14,7 +15,8 @@ const icons = {
   people: <UserIcon />,
   turno: <TurnoBaseIcon />,
   devoto: <DevotoIcon />,
-  backArrow: <BackArrowIcon />
+  backArrow: <BackArrowIcon />,
+  cortejo: <CortejoIcon />
 } as const
 
 interface IconProperties {
@@ -23,9 +25,9 @@ interface IconProperties {
 const Icon: React.FC<IconProperties> = (props: IconProperties) => {
   const { name } = props
   return (
-  <>
-   {icons[name]}
-  </>
+    <>
+      {icons[name]}
+    </>
   )
 }
 
