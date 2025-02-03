@@ -18,6 +18,7 @@ export interface TurnoForm {
   usuario: number
   devoto: number | undefined
   cantidad: number
+  extraordinario?: boolean
 }
 
 export interface Turno {
@@ -35,4 +36,31 @@ export interface TurnosDisponibles {
   tipo_turno: number
   nombre: string
   disponibles: number
+  extraordinario?: boolean
+}
+
+export interface TieneExtraordinario {
+  tipo_turno: number
+  tiene_extraordinario: boolean
+  devoto: number
+  ya_cuenta_extraordinario: boolean
+  en_lista_espera: boolean
+  devoto_extraordinario: number
+}
+
+export interface CortejoExtraordinario {
+  procesion: number
+  tipo_turno: number
+  devoto: number
+  devoto_extraordinario: number
+  fecha: string
+  consesion?: string
+  comentario?: string
+  recibo?: string
+}
+
+export interface DevotoExtraordinarioEspera {
+  tipo_turno: number
+  tipo_procesion: number
+  devoto: number
 }

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Button, Form, Input, Radio, InputNumber, Result, Select, DatePicker, Divider, Typography } from 'antd'
+import React, { useState, useEffect } from 'react'
+import { Button, Form, Input, Radio, InputNumber, Result, Select, DatePicker, Divider, Typography, Alert } from 'antd'
 import { type DevotoType, type DevotoFormProps } from '../../types/DevotoType'
 import { type TurnoForm, type TurnosDisponibles } from '../../types/TurnoType'
 import type { RadioChangeEvent } from 'antd'
@@ -9,7 +9,9 @@ import { useEditDevotoFormData } from '../../hooks/useEditDevotoFormData'
 import { useCreateTurnoFormData } from '../../hooks/useCreateTurnoFormData'
 import { getProcesionesQuery } from '../../apollo-graphql/queries/ProcesionesHabilitadasQ.tsx'
 import { useDisponiblesByProcesion } from '../../hooks/useTurnosDisopnibles'
-
+import { useCheckDevotoExtraordinario } from '../../hooks/useCheckDevotoExtraordinario'
+import { useGuardarExtraordinarioProcesion } from '../../hooks/useGuardarExtraordinarioProcesion'
+import { useGuardarDevotoListaEspera } from '../../hooks/useGuardarDevotoListaEspera'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const draftData = {
   usuario: 2,
@@ -31,8 +33,18 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [turnosDisponibles, setTurnosDisponibles] = useState<TurnosDisponibles []>([])
   const { handleDisponiblesByProcesion } = useDisponiblesByProcesion()
+  const { handleCheckDevotoExtraordinario } = useCheckDevotoExtraordinario()
+  const { handleGuardarExtraordinarioProcesion } = useGuardarExtraordinarioProcesion()
+  const { handleGuardarDevotoListaEspera } = useGuardarDevotoListaEspera()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedTurno, setSelectedTurno] = useState<null | string>()
+  const [isCurrentExtraordinario, setCurrentExtraordinario] = useState(false)
+  const [puedeTenerExtraoridnario, setPuedeTenerExtraordinario] = useState(false)
+  const [currentProcesion, setCurrentProcesion] = useState(0)
+  const [mensajeExtraordinario, setMesajeExtraordinario] = useState('')
+  const [sePuedeInscribirExtra, setSepuedeInscribirExtra] = useState(true)
+  const [devotoExtraordinario, setDevotoExtraordinario] = useState(0)
+  const [savingMethod, setSavingMethod] = useState(0) // 0 = turno normal, 1- extraordinario,  2- lista de espera
   const changeSexo = ({ target: { value } }: RadioChangeEvent): void => {
     setSexo(value)
   }
@@ -66,7 +78,7 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
 
   const handleProcesiones = (value: string): void => {
     const [procesionTmp, tipoProcesionTmp] = value.split(',')
-
+    setCurrentProcesion(parseInt(procesionTmp))
     setSelectedTurno(undefined)
     const disponiblesData = handleDisponiblesByProcesion({
       procesion: parseInt(procesionTmp),
@@ -82,9 +94,63 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
   }
 
   const handleSelectTurno = (value: string): void => {
+    const tipoTurno = turnosDisponibles.find(item => item.tipo_turno === parseInt(value))
+    setCurrentExtraordinario(tipoTurno?.extraordinario ?? false)
     setDisableTurnos(false)
     setSelectedTurno(value)
   }
+
+  useEffect(() => {
+    if (isCurrentExtraordinario) {
+      const checkDevotoExtraordinarioData = handleCheckDevotoExtraordinario({
+        devoto: parseInt(devotoData.devoto?.toString() ?? ''),
+        tipo_turno: parseInt(selectedTurno ?? ''),
+        procesion: currentProcesion
+      })
+      void checkDevotoExtraordinarioData.then((data) => {
+        console.log(data)
+        setPuedeTenerExtraordinario(data.data?.checkDevotoExtraordinario?.tiene_extraordinario ?? false)
+        setDevotoExtraordinario(data.data?.checkDevotoExtraordinario?.devoto_extraordinario ?? 0)
+        const extraordinarioData = data.data?.checkDevotoExtraordinario
+        if (extraordinarioData != null) {
+          const {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            en_lista_espera,
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            ya_cuenta_extraordinario,
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            tiene_extraordinario
+          } = extraordinarioData
+
+          if (tiene_extraordinario) {
+            // eslint-disable-next-line
+            if (ya_cuenta_extraordinario) {
+              setMesajeExtraordinario('El devoto ya esta inscrito')
+              // eslint-disable-next-line
+              setSepuedeInscribirExtra(false)
+            } else {
+              setMesajeExtraordinario('El devoto se puede inscribir')
+              setSepuedeInscribirExtra(true)
+              setSavingMethod(1)
+            }
+          } else {
+            // eslint-disable-next-line
+            if (en_lista_espera) {
+              setMesajeExtraordinario('El devoto ya esta en lista de espera')
+              // eslint-disable-next-line
+              setSepuedeInscribirExtra(false)
+            } else {
+              setMesajeExtraordinario('El devoto se puede poner en lista de espera')
+              setSepuedeInscribirExtra(true)
+              setSavingMethod(2)
+            }
+          }
+        }
+      }).catch((e) => {
+        console.log(e)
+      })
+    }
+  }, [isCurrentExtraordinario, selectedTurno])
 
   const onFinishturno = (data: any): void => {
     const { devoto } = devotoData
@@ -104,13 +170,44 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
       procesion: procesionTmp,
       cantidad
     }
-    const resultTurno = handleTurnoFormSubmit(turnoFormData)
-    void resultTurno.then((tdata) => {
-      setTurnoSubmit(1)
-    }).catch(e => {
-      console.log(e)
-      setTurnoSubmit(2)
-    })
+    if (savingMethod === 0) {
+      const resultTurno = handleTurnoFormSubmit(turnoFormData)
+      void resultTurno.then((tdata) => {
+        setTurnoSubmit(1)
+      }).catch(e => {
+        console.log(e)
+        setTurnoSubmit(2)
+      })
+    } else if (savingMethod === 1) {
+      const resultExtraordinario = handleGuardarExtraordinarioProcesion({
+        procesion: procesionTmp,
+        tipo_turno,
+        devoto: (devoto != null) ? +devoto : 0,
+        devoto_extraordinario: devotoExtraordinario,
+        fecha: fechaStr,
+        recibo
+      })
+      void resultExtraordinario.then((edata) => {
+        console.log(edata)
+        setTurnoSubmit(1)
+      }).catch(e => {
+        console.log(e)
+        setTurnoSubmit(2)
+      })
+    } else if (savingMethod === 2) {
+      const resultListaEspera = handleGuardarDevotoListaEspera({
+        tipo_turno,
+        tipo_procesion: 2,
+        devoto: (devoto != null) ? +devoto : 0
+      })
+      void resultListaEspera.then((ldata) => {
+        console.log(ldata)
+        setTurnoSubmit(1)
+      }).catch(e => {
+        console.log(e)
+        setTurnoSubmit(2)
+      })
+    }
   }
   // eslint-disable-next-line no-extra-boolean-cast
   if (!Boolean(isTurno)) {
@@ -262,7 +359,6 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
                 >
                 <Select
                 value={selectedTurno}
-                open={disableTurnos}
                 options={turnosDisponibles.map((turno) => ({
                   value: turno.tipo_turno,
                   label: `${turno.nombre} - disponibles: ${turno.disponibles}`
@@ -270,6 +366,18 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
                 onChange={handleSelectTurno}
                 />
               </Form.Item>
+              { isCurrentExtraordinario && selectedTurno != null &&
+                <Form.Item<TurnoForm>
+                  label="Informacion extraordinario"
+                  name="extraordinario"
+                  >
+                    { puedeTenerExtraoridnario
+                      ? <Alert message={'El devoto cuenta con el turno extraordinario seleccionado - ' + (mensajeExtraordinario === '' ? '' : mensajeExtraordinario) } type="success" />
+                      : <Alert message={'El devoto no posee el turno extraordinario  - ' + (mensajeExtraordinario === '' ? 'escribir en lista de espera' : mensajeExtraordinario) } type="warning" />
+                    }
+
+                </Form.Item>
+              }
               <Form.Item<TurnoForm>
                 label="Recibo No."
                 name="recibo"
@@ -282,10 +390,10 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
                 name="cantidad"
                 rules={[{ required: true, message: 'Por favor ingrese la cantidad de turnos' }]}
               >
-                <InputNumber />
+                <InputNumber disabled={isCurrentExtraordinario && selectedTurno != null}/>
               </Form.Item>
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <Button type="primary" htmlType="submit">
+                  <Button type="primary" htmlType="submit" disabled={!sePuedeInscribirExtra}>
                     Guardar turno
                   </Button>
               </Form.Item>

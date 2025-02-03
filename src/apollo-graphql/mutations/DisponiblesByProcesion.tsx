@@ -15,6 +15,7 @@ const GET_TURNOS_DISPONIBLES = gql`
         disponiblesByProcesion(procesion: $procesion,tipo_procesion: $tipo_procesion) {
             tipo_turno
             nombre
+            extraordinario
             disponibles
     }
 }
