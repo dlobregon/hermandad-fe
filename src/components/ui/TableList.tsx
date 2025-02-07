@@ -24,6 +24,9 @@ interface FilterType {
 const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto, addTurno }: tableListProps) => {
   const [totalShownItems, setTotalShownItems] = useState(data?.length)
   const [currentFilters, setCurrentFilters] = useState<FilterType>({ nombres: null, apellidos: null, dpi: null, sexo: null })
+  const [searchText, setSearchText] = useState('')
+  const [devotosToShow, setDevotosToShow] = useState<DevotoType [] | undefined>(data)
+
   const searchInput = useRef<InputRef>(null)
 
   const handleSearch = (
@@ -177,16 +180,41 @@ const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto, addTur
     setCurrentFilters(filters)
   }
 
+  const onChangeSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setSearchText(e.target.value)
+  }
+
+  const resetSearch = (): void => {
+    setSearchText('')
+    setDevotosToShow(data)
+  }
+  const doGeneralSearch = (value: string): void => {
+    const tmpSearch = value.trim()
+    const filteredData = data?.filter((devoto) => {
+      return devoto.nombres?.toLowerCase().includes(tmpSearch.toLowerCase()) ||
+        devoto.apellidos?.toLowerCase().includes(tmpSearch.toLowerCase()) ||
+        devoto.dpi?.toString().includes(tmpSearch.toLowerCase()) ||
+        devoto.telefono?.toString().includes(tmpSearch.toLowerCase())
+    })
+    setDevotosToShow(filteredData)
+  }
+
   return (
     <>
         <Table
-          dataSource={data}
+          dataSource={devotosToShow}
           rowKey='devoto'
           size="middle"
           columns={columns}
           onChange={onChange}
           title={() => (
-            <div style={ { height: '20px' }}>
+            <div style={ { height: '20px', marginBottom: '10px' } }>
+              <Space.Compact style={{ width: '50%' }}>
+                <Input value={searchText} onChange={onChangeSearch} pattern='Ingrese texto a buscar en DPI, Nombres, appelidos o telefono'/>
+                <Button onClick={() => { doGeneralSearch(searchText) }}>Buscar</Button>
+                <Button onClick={resetSearch}>X</Button>
+              </Space.Compact>
+              &nbsp;
               {currentFilters.dpi != null || currentFilters.nombres != null || currentFilters.apellidos != null || currentFilters.sexo != null ? 'Filtros: ' : '' }
               {(currentFilters.dpi != null) ? <Tag bordered={false}>Dpi:    <strong>{currentFilters.dpi?.[0]}</strong></Tag> : null }
               {(currentFilters.nombres != null) ? <Tag bordered={false}>nombres:     <strong>{currentFilters.nombres?.[0]}</strong></Tag> : null }
