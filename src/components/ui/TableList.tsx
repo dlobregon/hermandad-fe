@@ -187,16 +187,26 @@ const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto, addTur
   const resetSearch = (): void => {
     setSearchText('')
     setDevotosToShow(data)
+    setTotalShownItems(data?.length)
   }
+
+  const normalizeText = (text: string): string => {
+    return text?.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  }
+
   const doGeneralSearch = (value: string): void => {
+    if (value === '') {
+      return
+    }
     const tmpSearch = value.trim()
     const filteredData = data?.filter((devoto) => {
-      return devoto.nombres?.toLowerCase().includes(tmpSearch.toLowerCase()) ||
-        devoto.apellidos?.toLowerCase().includes(tmpSearch.toLowerCase()) ||
-        devoto.dpi?.toString().includes(tmpSearch.toLowerCase()) ||
-        devoto.telefono?.toString().includes(tmpSearch.toLowerCase())
+      return normalizeText(devoto?.nombres)?.includes(normalizeText(tmpSearch)) ||
+      normalizeText(devoto?.apellidos)?.includes(normalizeText(tmpSearch)) ||
+      normalizeText(devoto?.dpi?.toString())?.includes(normalizeText(tmpSearch)) ||
+      normalizeText(devoto?.telefono?.toString())?.includes(normalizeText(tmpSearch))
     })
     setDevotosToShow(filteredData)
+    setTotalShownItems(filteredData?.length)
   }
 
   return (
@@ -210,7 +220,7 @@ const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto, addTur
           title={() => (
             <div style={ { height: '20px', marginBottom: '10px' } }>
               <Space.Compact style={{ width: '50%' }}>
-                <Input value={searchText} onChange={onChangeSearch} pattern='Ingrese texto a buscar en DPI, Nombres, appelidos o telefono'/>
+                <Input value={searchText} onChange={onChangeSearch} placeholder='Buscar por DPI, Nombres, appelidos o telefono'/>
                 <Button onClick={() => { doGeneralSearch(searchText) }}>Buscar</Button>
                 <Button onClick={resetSearch}>X</Button>
               </Space.Compact>
