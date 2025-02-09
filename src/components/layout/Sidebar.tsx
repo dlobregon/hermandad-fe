@@ -10,7 +10,9 @@ interface Props {
 const Sidebar: React.FC <Props> = (props: Props) => {
   const { currentPage, handlePage } = props
   const handleSelection = (index: number): void => { handlePage(index) }
-
+  const authString = localStorage.getItem('auth')
+  const auth = (authString != null) ? JSON.parse(authString) : {}
+  const isAdmin = auth.userType === 'admin'
   return (
     <div className="sidenav">
         <div className='sidenav-header'>
@@ -32,22 +34,22 @@ const Sidebar: React.FC <Props> = (props: Props) => {
                 <span>Devotos</span>
             </div>
         </div>
-        <div className={currentPage === 2 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(2) }}>
+        {isAdmin && <div className={currentPage === 2 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(2) }}>
             <div className='sidenav-icon'>
                 <Icon name='turno' />
             </div>
             <div className='sidenav-text'>
                 <span>Turnos</span>
             </div>
-        </div>
-        <div className={currentPage === 3 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(3) }}>
+        </div> }
+        {isAdmin && <div className={currentPage === 3 ? 'sidenav-items-selected' : 'sidenav-items'} onClick={() => { handleSelection(3) }}>
             <div className='sidenav-icon'>
                 <Icon name='cortejo' />
             </div>
             <div className='sidenav-text'>
                 <span>Cortejos</span>
             </div>
-        </div>
+        </div> }
     </div>
   )
 }

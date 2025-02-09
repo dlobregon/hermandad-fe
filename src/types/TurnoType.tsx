@@ -19,6 +19,7 @@ export interface TurnoForm {
   devoto: number | undefined
   cantidad: number
   extraordinario?: boolean
+  claves?: string
 }
 
 export interface Turno {
@@ -63,4 +64,8 @@ export interface DevotoExtraordinarioEspera {
   tipo_turno: number
   tipo_procesion: number
   devoto: number
+}
+
+export interface DevotoClave {
+  clave: string
 }

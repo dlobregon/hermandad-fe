@@ -74,3 +74,10 @@
     background-color: #20aa13;
   }
 
+.button-salir {
+    float: inline-end;
+    justify-content: center;
+    line-height: 1.4;
+    padding: 6px 20px;
+    margin-left: 10px;
+}

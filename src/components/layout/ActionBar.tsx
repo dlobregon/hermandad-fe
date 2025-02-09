@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Icon from '../icons/Icon'
+import { Button } from 'antd'
 
 interface ActionhandlerParams {
   isForm: boolean
@@ -25,6 +26,12 @@ const ActionBar: React.FC<ActionBarProps> = ({ isForm, feature, handleActionbarO
     const newOptions = { isForm: false, feature }
     handleActionbarOptions(newOptions)
   }
+
+  const handleSalirButton = (): void => {
+    localStorage.clear()
+    window.location.reload()
+  }
+
   useEffect(() => {
     if (isForm) {
       setShowBack(true)
@@ -65,6 +72,7 @@ const ActionBar: React.FC<ActionBarProps> = ({ isForm, feature, handleActionbarO
        </div>
        <div className='actionbar-title'>{title}</div>
        <div className='actionbar-actions'>
+       <Button type='text' className='button-salir' onClick={handleSalirButton}> Salir </Button>
           {
             !showBack && feature !== 'inicio' && feature !== 'turnos'
               ? <button className='button-nuevo' onClick={handleActionButton}>{buttonText}</button>

@@ -12,6 +12,7 @@ import { useDisponiblesByProcesion } from '../../hooks/useTurnosDisopnibles'
 import { useCheckDevotoExtraordinario } from '../../hooks/useCheckDevotoExtraordinario'
 import { useGuardarExtraordinarioProcesion } from '../../hooks/useGuardarExtraordinarioProcesion'
 import { useGuardarDevotoListaEspera } from '../../hooks/useGuardarDevotoListaEspera'
+import { useGetClaves } from '../../hooks/useGetClaves'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const draftData = {
   usuario: 2,
@@ -36,6 +37,7 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
   const { handleCheckDevotoExtraordinario } = useCheckDevotoExtraordinario()
   const { handleGuardarExtraordinarioProcesion } = useGuardarExtraordinarioProcesion()
   const { handleGuardarDevotoListaEspera } = useGuardarDevotoListaEspera()
+  const { handleGetClaves } = useGetClaves()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedTurno, setSelectedTurno] = useState<null | string>()
   const [isCurrentExtraordinario, setCurrentExtraordinario] = useState(false)
@@ -45,6 +47,7 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
   const [sePuedeInscribirExtra, setSepuedeInscribirExtra] = useState(true)
   const [devotoExtraordinario, setDevotoExtraordinario] = useState(0)
   const [savingMethod, setSavingMethod] = useState(0) // 0 = turno normal, 1- extraordinario,  2- lista de espera
+  const [claves, setClaves] = useState<string>('No tiene registrada contraseñas')
   const changeSexo = ({ target: { value } }: RadioChangeEvent): void => {
     setSexo(value)
   }
@@ -100,7 +103,20 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
     setSelectedTurno(value)
   }
 
+  const extractClaves = (): void => {
+    const clavesData = handleGetClaves({ devoto: parseInt(devotoData.devoto?.toString() ?? '0') })
+    clavesData.then((data) => {
+      if (data?.data?.getClaves != null) {
+        const clavesString = data?.data?.getClaves.map((claveObj: { clave: string }) => claveObj.clave).join(', ')
+        setClaves(clavesString?.length > 0 ? clavesString : 'No tiene registrada contraseñas')
+      }
+    }).catch((e) => {
+      console.log(e)
+    })
+  }
+
   useEffect(() => {
+    extractClaves()
     if (isCurrentExtraordinario) {
       const checkDevotoExtraordinarioData = handleCheckDevotoExtraordinario({
         devoto: parseInt(devotoData.devoto?.toString() ?? ''),
@@ -378,6 +394,12 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
 
                 </Form.Item>
               }
+              <Form.Item<TurnoForm>
+                  label="Contraseñas"
+                  name="claves"
+                  >
+                    <Alert message={claves} type="info" />
+                </Form.Item>
               <Form.Item<TurnoForm>
                 label="Recibo No."
                 name="recibo"

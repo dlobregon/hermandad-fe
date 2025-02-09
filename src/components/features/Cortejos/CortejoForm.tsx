@@ -23,7 +23,7 @@ const CortejoForm: React.FC<CortejoFormProps> = (props: CortejoFormProps) => {
   // console.log(formData)
   return (
         <Form
-        name='basic'
+        name='cortejo'
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         autoComplete='off'

@@ -1,9 +1,4 @@
 import React from 'react'
-import ReactDOM from 'react-dom/client'
-import './index.css'
-import App from './App'
-// import Login from './components/ui/Login'
-import reportWebVitals from './reportWebVitals'
 import type { FormProps } from 'antd'
 import { Button, Form, Input } from 'antd'
 
@@ -30,7 +25,6 @@ const mockLogin = (username: string, password: string): boolean => {
 const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
   if ((values.username != null) && (values.password != null) && mockLogin(values.username, values.password)) {
     console.log('Login successful')
-    window.location.reload()
   } else {
     console.log('Login failed')
   }
@@ -39,7 +33,7 @@ const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
 const Login: React.FC = () => (
 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
     <Form
-        name="login"
+        name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         style={{ maxWidth: 600 }}
@@ -74,15 +68,4 @@ const Login: React.FC = () => (
 
 )
 
-const auth = localStorage.getItem('auth')
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-)
-root.render(
-  ((auth != null) && Boolean(JSON.parse(auth).login)) ? <App /> : <><Login /><Login /></>
-)
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals()
+export default Login
