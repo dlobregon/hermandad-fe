@@ -14,9 +14,15 @@ const Turno: React.FC = () => {
   const { handleTurnosByProcesion } = useTurnoByProcesion()
   const [isLoaded, setIsloaded] = useState(false)
   const [isProcesionChange, setProcesionChange] = useState(false)
+  const [cantidadTurnos, setCantidadTurnos] = useState(0)
 
   const { data } = getProcesionesQuery()
-
+  useEffect(() => {
+    if (turnos != null) {
+      const totalCantidad = turnos.reduce((acc, turno) => acc + turno.cantidad, 0)
+      setCantidadTurnos(totalCantidad)
+    }
+  }, [turnos])
   const handleChangeProcesion = (value: string): void => {
     setCurrentProcesion(parseInt(value))
     if (parseInt(value) !== currentProcesion) {
@@ -55,7 +61,7 @@ const Turno: React.FC = () => {
                     </Button>
                     <Text type='danger'>{isProcesionChange ? 'No se muestran los datos seleccionados' : ''}</Text>
                 </Space>
-                <p style={{ float: 'right' }}>Cantidad de Turnos: {turnos.length}</p>
+                <p style={{ float: 'right' }}>Cantidad de Turnos: {cantidadTurnos}</p>
                 <Divider />
         </div>
         {isLoaded
