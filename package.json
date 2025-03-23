@@ -11,7 +11,7 @@
     "@types/node": "^16.18.39",
     "@types/react": "^18.2.18",
     "@types/react-dom": "^18.2.7",
-    "antd": "^5.9.3",
+    "antd": "^5.24.2",
     "dayjs": "^1.11.10",
     "graphql": "^16.8.1",
     "react": "^18.2.0",
