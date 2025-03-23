@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Form, Input, Radio, InputNumber, Result, Select, DatePicker, Divider, Typography, Alert } from 'antd'
+import { Button, Form, Input, Radio, InputNumber, Result, DatePicker, Divider, Typography, Alert, List, Tag, Card } from 'antd'
 import { type DevotoType, type DevotoFormProps } from '../../types/DevotoType'
-import { type TurnoForm, type TurnosDisponibles } from '../../types/TurnoType'
+import { type TurnoForm, type TurnosDisponibles, type DetalleTipoTurnoClave } from '../../types/TurnoType'
 import type { RadioChangeEvent } from 'antd'
 import dayjs from 'dayjs'
 import { useCreateDevotoFormData } from '../../hooks/useCreateDevotoFormData'
@@ -12,7 +12,7 @@ import { useDisponiblesByProcesion } from '../../hooks/useTurnosDisopnibles'
 import { useCheckDevotoExtraordinario } from '../../hooks/useCheckDevotoExtraordinario'
 import { useGuardarExtraordinarioProcesion } from '../../hooks/useGuardarExtraordinarioProcesion'
 import { useGuardarDevotoListaEspera } from '../../hooks/useGuardarDevotoListaEspera'
-import { useGetClaves } from '../../hooks/useGetClaves'
+import { useGetClavesDetalleTipoTurno } from '../../hooks/useGetClavesDetalleTipoTurno'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const draftData = {
   usuario: 2,
@@ -37,7 +37,7 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
   const { handleCheckDevotoExtraordinario } = useCheckDevotoExtraordinario()
   const { handleGuardarExtraordinarioProcesion } = useGuardarExtraordinarioProcesion()
   const { handleGuardarDevotoListaEspera } = useGuardarDevotoListaEspera()
-  const { handleGetClaves } = useGetClaves()
+  const { handleGetClavesDetalleTipoTurno } = useGetClavesDetalleTipoTurno()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedTurno, setSelectedTurno] = useState<null | string>()
   const [isCurrentExtraordinario, setCurrentExtraordinario] = useState(false)
@@ -47,7 +47,7 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
   const [sePuedeInscribirExtra, setSepuedeInscribirExtra] = useState(true)
   const [devotoExtraordinario, setDevotoExtraordinario] = useState(0)
   const [savingMethod, setSavingMethod] = useState(0) // 0 = turno normal, 1- extraordinario,  2- lista de espera
-  const [claves, setClaves] = useState<string>('No tiene registrada contraseñas')
+  const [claveDetalles, setClaveDetalles] = useState<DetalleTipoTurnoClave[] >([])
   const changeSexo = ({ target: { value } }: RadioChangeEvent): void => {
     setSexo(value)
   }
@@ -79,6 +79,7 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
     })
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleProcesiones = (value: string): void => {
     const [procesionTmp, tipoProcesionTmp] = value.split(',')
     setCurrentProcesion(parseInt(procesionTmp))
@@ -96,6 +97,7 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
     })
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSelectTurno = (value: string): void => {
     const tipoTurno = turnosDisponibles.find(item => item.tipo_turno === parseInt(value))
     setCurrentExtraordinario(tipoTurno?.extraordinario ?? false)
@@ -104,12 +106,10 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
   }
 
   const extractClaves = (): void => {
-    const clavesData = handleGetClaves({ devoto: parseInt(devotoData.devoto?.toString() ?? '0') })
-    clavesData.then((data) => {
-      if (data?.data?.getClaves != null) {
-        const clavesString = data?.data?.getClaves.map((claveObj: { clave: string }) => claveObj.clave).join(', ')
-        setClaves(clavesString?.length > 0 ? clavesString : 'No tiene registrada contraseñas')
-      }
+    const clavesDetalleData = handleGetClavesDetalleTipoTurno({ devoto: parseInt(devotoData.devoto?.toString() ?? '0') })
+    clavesDetalleData.then((data) => {
+      console.log(data?.data?.getClavesDetalleTipoTurno)
+      setClaveDetalles(data?.data?.getClavesDetalleTipoTurno ?? [])
     }).catch((e) => {
       console.log(e)
     })
@@ -325,13 +325,15 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
     </>
     )
   } else {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { data } = getProcesionesQuery()
     const { Text } = Typography
     return (
       <>
       {
         turnoSubmit === 0
-          ? <Form
+          ? <>
+              <Form
               name='turno'
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
@@ -347,40 +349,11 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
                 </Form.Item>
                 <Divider />
               <Form.Item<TurnoForm>
-                name='procesion'
-                label="Seleccionar cortejo"
-                rules={[{ required: true, message: 'Seleccione un cortejo' }]}
-              >
-                <Select style={{ width: 240 }}
-                  placeholder='seleccione un cortejo procesional'
-                  disabled={data === null}
-                  options={data?.procesionesHabilitadas.map((procesion) => ({
-                    value: `${procesion.procesion},${procesion.tipo_procesion}`,
-                    label: procesion.nombre
-                  }))}
-                  onChange={handleProcesiones}
-                />
-              </Form.Item>
-              <Form.Item<TurnoForm>
                 name='fecha'
                label="Fecha Inscripcion"
                rules={[{ required: true, message: 'Por favor seleccione una fecha' }]}
                >
                 <DatePicker placeholder='seleccionar'/>
-              </Form.Item>
-              <Form.Item<TurnoForm>
-                name='tipo_turno'
-                label="Tipo turno"
-                rules={[{ required: true, message: 'Por favor seleccione un turno' }]}
-                >
-                <Select
-                value={selectedTurno}
-                options={turnosDisponibles.map((turno) => ({
-                  value: turno.tipo_turno,
-                  label: `${turno.nombre} - disponibles: ${turno.disponibles}`
-                }))}
-                onChange={handleSelectTurno}
-                />
               </Form.Item>
               { isCurrentExtraordinario && selectedTurno != null &&
                 <Form.Item<TurnoForm>
@@ -391,35 +364,51 @@ const FormView: React.FC<DevotoFormProps> = (formProps: DevotoFormProps) => {
                       ? <Alert message={'El devoto cuenta con el turno extraordinario seleccionado - ' + (mensajeExtraordinario === '' ? '' : mensajeExtraordinario) } type="success" />
                       : <Alert message={'El devoto no posee el turno extraordinario  - ' + (mensajeExtraordinario === '' ? 'escribir en lista de espera' : mensajeExtraordinario) } type="warning" />
                     }
-
                 </Form.Item>
               }
               <Form.Item<TurnoForm>
-                  label="Contraseñas"
+                  label="Inscripcion turnos"
                   name="claves"
                   >
-                    <Alert message={claves} type="info" />
+                    <Card type="inner" title="Contraseñas disponibles" extra={<Button color="primary" variant="link">Agregar Turno (nueva contraseña)</Button>}>
+                      <List>
+                        {claveDetalles.map((clave) => (
+                          <List.Item key={clave.clave}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                              <div>
+                                {clave.nombre_tipo_turno}: &nbsp;
+                                <strong>
+                                  {clave.clave}
+                                </strong>
+                                &nbsp;&nbsp;
+                                <Tag color={clave.disponible ? 'green' : 'red'}>
+                                  {clave.disponible ? 'disponible' : 'comprado'}
+                                </Tag>
+                              </div>
+                              <div style={{ marginLeft: 'auto', display: 'flex', justifyContent: 'flex-end' }}>
+                                <Button color="primary" variant="text" disabled={!clave.disponible}>
+                                  Inscribir
+                                </Button>
+                              </div>
+                            </div>
+                          </List.Item>
+                        ))}
+                      </List>
+                    </Card>
                 </Form.Item>
               <Form.Item<TurnoForm>
-                label="Recibo No."
-                name="recibo"
-                rules={[{ required: true, message: 'Por favor ingrese un número de recibo' }]}
+                label="Comentario"
+                name="comentario"
               >
-                <Input placeholder="Ingresar numero de recibo" />
-              </Form.Item>
-              <Form.Item<TurnoForm>
-                label="Cantidad de turnos"
-                name="cantidad"
-                rules={[{ required: true, message: 'Por favor ingrese la cantidad de turnos' }]}
-              >
-                <InputNumber disabled={isCurrentExtraordinario && selectedTurno != null}/>
+                <Input placeholder="Ingresar comentario" />
               </Form.Item>
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                   <Button type="primary" htmlType="submit" disabled={!sePuedeInscribirExtra}>
                     Guardar turno
                   </Button>
               </Form.Item>
-            </Form>
+              </Form>
+            </>
           : turnoSubmit === 1
             ? <Result
               status="success"

@@ -169,7 +169,7 @@ const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto, addTur
       render: (_: any, devoto: DevotoType) => (
         <Space size="middle">
           <Button type="link" size="small" onClick={() => { callEdit(devoto) }}> Editar</Button>
-          <Button type="link" size="small" onClick={() => { callAddturno(devoto) }}> Agregar turno</Button>
+          <Button type="link" size="small" onClick={() => { callAddturno(devoto) }}> Inscripcion </Button>
         </Space>
       )
     }
@@ -209,6 +209,8 @@ const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto, addTur
     setTotalShownItems(filteredData?.length)
   }
 
+  const userTypesEnter = (): void => { doGeneralSearch(searchText) }
+
   return (
     <>
         <Table
@@ -220,9 +222,10 @@ const TableList: React.FC<tableListProps> = ({ data, defineCurrentDevoto, addTur
           title={() => (
             <div style={ { height: '20px', marginBottom: '10px' } }>
               <Space.Compact style={{ width: '50%' }}>
-                <Input value={searchText} onChange={onChangeSearch} placeholder='Buscar por DPI, Nombres, appelidos o telefono'/>
-                <Button onClick={() => { doGeneralSearch(searchText) }}>Buscar</Button>
-                <Button onClick={resetSearch}>X</Button>
+                <Input
+                  value={searchText} onChange={onChangeSearch} placeholder='Buscar por DPI, Nombres, appelidos o telefono' onPressEnter={userTypesEnter} />
+                <Button color='primary' variant='filled' onClick={() => { doGeneralSearch(searchText) }} >Buscar</Button>
+                <Button color='danger' variant='filled' onClick={resetSearch}>X</Button>
               </Space.Compact>
               &nbsp;
               {currentFilters.dpi != null || currentFilters.nombres != null || currentFilters.apellidos != null || currentFilters.sexo != null ? 'Filtros: ' : '' }
