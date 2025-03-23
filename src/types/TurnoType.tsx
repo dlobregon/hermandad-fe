@@ -11,15 +11,16 @@ export interface ReporteTurno {
 
 export interface TurnoForm {
   numero: number
-  recibo: number
-  procesion: number
+  recibo?: number
+  procesion?: number
   fecha: string
-  tipo_turno: number
+  tipo_turno?: number
   usuario: number
   devoto: number | undefined
-  cantidad: number
+  cantidad?: number
   extraordinario?: boolean
   claves?: string
+  comentario?: string
 }
 
 export interface Turno {
@@ -68,4 +69,10 @@ export interface DevotoExtraordinarioEspera {
 
 export interface DevotoClave {
   clave: string
+}
+
+export interface DetalleTipoTurnoClave {
+  nombre_tipo_turno: string
+  clave: string
+  disponible: boolean
 }
