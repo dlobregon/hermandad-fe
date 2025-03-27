@@ -5,11 +5,13 @@ import { getClavesDetalleTipoTurnoQuery } from '../apollo-graphql/mutations/getC
 export function useGetClavesDetalleTipoTurno () {
   const [getClavesDetalleTipoTurno] = getClavesDetalleTipoTurnoQuery()
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const handleGetClavesDetalleTipoTurno = useCallback(async ({ devoto }: { devoto: number }) => {
+  const handleGetClavesDetalleTipoTurno = useCallback(async ({ devoto, tipo_turno }: { devoto: number, tipo_turno: number }) => {
+    console.log('devoto', devoto, 'tipo_turno', tipo_turno)
     const data = await getClavesDetalleTipoTurno(
       {
         variables: {
-          devoto
+          devoto,
+          tipo_turno
         }
       }
     )
