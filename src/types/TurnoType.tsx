@@ -75,4 +75,22 @@ export interface DetalleTipoTurnoClave {
   nombre_tipo_turno: string
   clave: string
   disponible: boolean
+  clave_id: number
+}
+
+export interface ResultadoNuevaClave {
+  devoto: number
+  tipo_turno: number
+  codigo: string
+}
+
+export interface ComprarClave {
+  clave_id: number
+}
+
+export interface Inscripcion {
+  devoto: number
+  comentarios: string
+  cantidad: number
+  claves: number[]
 }
